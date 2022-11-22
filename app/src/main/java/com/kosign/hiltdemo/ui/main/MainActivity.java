@@ -6,6 +6,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,9 +41,9 @@ import rx.schedulers.Schedulers;
 
 @AndroidEntryPoint
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
-
-    @Inject
-    IUserRepository repository;
+//
+//    @Inject
+//    IUserRepository repository;
 
     MainViewModel viewModel;
 
@@ -57,6 +60,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             viewModel.userList.addAll(users);
             adapter.setUsers(users);
             binding.rvUser.setAdapter(adapter);
+        });
+
+        viewModel.internetConnection.observe(this, b->{
+            if (!b) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                //Setting message manually and performing action on button click
+                builder.setMessage("Please check your connection!").setTitle("Notice")
+                        .setCancelable(false)
+                        .setPositiveButton("Try again", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                                viewModel.fetchUsers();
+                            }
+                        });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
         });
 
         findViewById(R.id.request_more).setOnClickListener(new View.OnClickListener() {

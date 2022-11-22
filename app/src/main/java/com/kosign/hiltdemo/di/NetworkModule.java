@@ -2,11 +2,14 @@ package com.kosign.hiltdemo.di;
 
 import static rx.schedulers.Schedulers.io;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.kosign.hiltdemo.data.api.ApiService;
+import com.kosign.hiltdemo.data.network.NetworkConnectivity;
+import com.kosign.hiltdemo.data.network.NetworkUtil;
 import com.kosign.hiltdemo.data.network.customcalladapter.ErrorHandlingAdapter;
 import com.kosign.hiltdemo.data.network.customcalladapter.java8.Java8CallAdapterFactory;
 import com.kosign.hiltdemo.data.network.customcalladapter.livedata.LiveDataCallAdapterFactory;
@@ -22,6 +25,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -39,11 +43,19 @@ import rx.schedulers.Schedulers;
 @InstallIn(SingletonComponent.class)
 public class NetworkModule {
 
+
+
     String fireBasetoken;
 
     @Provides
     String providesBaseUrl() {
         return "https://5e510330f2c0d300147c034c.mockapi.io/";
+    }
+
+    @Provides
+    @Singleton
+    NetworkConnectivity provideNetworkConnection(@ApplicationContext Context context){
+        return new NetworkUtil(context);
     }
 
 //    @Provides

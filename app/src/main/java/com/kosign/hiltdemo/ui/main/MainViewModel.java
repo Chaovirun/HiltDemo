@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 import com.kosign.hiltdemo.data.model.LoginRequest;
 import com.kosign.hiltdemo.data.model.LoginResponse;
 import com.kosign.hiltdemo.data.model.User;
+import com.kosign.hiltdemo.data.network.NetworkConnectivity;
 import com.kosign.hiltdemo.data.network.Resource;
 import com.kosign.hiltdemo.data.network.Status;
 import com.kosign.hiltdemo.data.repository.IUserRepository;
@@ -32,10 +33,14 @@ public class MainViewModel extends ViewModel {
     private final static String TAG = MainViewModel.class.getName();
 
     private IUserRepository repository;
-
+    private NetworkConnectivity connectivity;
 
     MutableLiveData<Boolean> _dataLoading = new MutableLiveData<>(false);
     public LiveData<Boolean> dataLoading = _dataLoading;
+
+    MutableLiveData<Boolean> _internetConnection = new MutableLiveData<>(false);
+    public LiveData<Boolean> internetConnection = _internetConnection;
+
 
 //    public Boolean getDataLoading() {
 //        return dataLoading.getValue();
@@ -52,9 +57,12 @@ public class MainViewModel extends ViewModel {
 
     public List<User> userList;
 
+
+
     @Inject
-    MainViewModel(IUserRepository repository){
+    MainViewModel(IUserRepository repository, NetworkConnectivity connectivity){
         this.repository = repository;
+        this.connectivity = connectivity;
         userList = new ArrayList<>();
     }
 
@@ -129,55 +137,33 @@ public class MainViewModel extends ViewModel {
 
     void fetchUsers() {
         _dataLoading.setValue(true);
+        _internetConnection.setValue(connectivity.isConnected());
+        if (connectivity.isConnected()) {
+            repository.getUsers()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Response<List<User>>>() {
+                        @Override
+                        public void onCompleted() {
 
-        repository.getUsers()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<User>>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(">>>", "getUsers >>> onError:  " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(Response<List<User>> users) {
-//                        _user.postValue(users);
-                        _dataLoading.postValue(false);
-                        if (users.isSuccessful()){
-                            _user.postValue(users.body());
                         }
-                        Log.d(TAG, "fetchUsers: " + users);
-                    }
-                });
 
-//        _listMutableLiveData.postValue(repository.getUsers());
-//        _user.postValue(repository.getUsers().getValue().getData());
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(">>>", "getUsers >>> onError:  " + e.getMessage());
+                        }
 
-//        try {
-//            Response<List<User>> res = repository.getUsers().get();
-//            Log.d(TAG, "fetchUsers: " + res.code());
-//            if (res.isSuccessful()){
-//                _user.postValue(res.body());
-//            }
-//        } catch (ExecutionException e) {
-//            Log.d(TAG, "ExecutionException: " + e);
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            Log.d(TAG, "InterruptedException: " + e);
-//            e.printStackTrace();
-//        }
-
-
-//        listMutableLiveData = repository.getUsers();
-
-//        repository.getUsers();
-
-
+                        @Override
+                        public void onNext(Response<List<User>> users) {
+//                        _user.postValue(users);
+                            _dataLoading.postValue(false);
+                            if (users.isSuccessful()) {
+                                _user.postValue(users.body());
+                            }
+                            Log.d(TAG, "fetchUsers: " + users);
+                        }
+                    });
+        }
     }
 
 
