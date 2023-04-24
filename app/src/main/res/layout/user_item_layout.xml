@@ -28,6 +28,7 @@
             app:searchOrigin="@{user.id + user.name}"
             app:searchKey="@{user.searchKey}"
             tools:text="Username"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.089"
             app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -58,7 +59,7 @@
 
         <LinearLayout
             android:id="@+id/hide_content"
-            android:visibility="@{user.showMore ? View.VISIBLE : View.GONE}"
+            app:visibility="@{user.showMore}"
             android:layout_width="350dp"
             android:layout_height="60dp"
             android:background="@color/teal_200"

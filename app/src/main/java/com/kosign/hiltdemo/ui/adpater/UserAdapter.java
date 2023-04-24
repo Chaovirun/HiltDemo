@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,19 +19,31 @@ import com.kosign.hiltdemo.data.model.User;
 import com.kosign.hiltdemo.databinding.UserItemLayoutBinding;
 import com.kosign.hiltdemo.ui.main.MainViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.BindableViewHolder> {
 
 //    UserItemLayoutBinding binding;
     private final MainViewModel viewModel;
-    public UserAdapter(MainViewModel viewModel){
+    public UserAdapter(List<User> users,MainViewModel viewModel){
+        this.users.addAll(users);
         this.viewModel = viewModel;
     }
 
-    List<User> users;
+    List<User> users = new ArrayList<>();
+    public void updateUsers(List<User> users){
+        final UserDiffCallback callback = new UserDiffCallback(this.users, users);
+        final DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
+
+        this.users.clear();
+        this.users.addAll(users);
+        result.dispatchUpdatesTo(this);
+    }
+
     public void setUsers(List<User> users){
-        this.users = users;
+        this.users.clear();
+        this.users.addAll(users);
         notifyDataSetChanged();
     }
 
@@ -75,23 +88,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.BindableViewHo
 
             binding = (UserItemLayoutBinding) DataBindingUtil.bind(itemView);
 
-            binding.card.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (binding.hideContent.getVisibility() == View.VISIBLE)
-                        user.setShowMore(false);
-                    else
-                        user.setShowMore(true);
-                    notifyItemChanged(getAdapterPosition());
-                }
+            binding.card.setOnClickListener(view -> {
+                user.setShowMore(binding.hideContent.getVisibility() != View.VISIBLE);
+                notifyItemChanged(getAdapterPosition());
             });
 
         }
-
-//         ViewHolder from(ViewGroup parent){
-//            binding = UserItemLayoutBinding.inflate(LayoutInflater.from(parent.getContext()));
-//            return new ViewHolder(binding.getRoot());
-//        }
 
     }
 

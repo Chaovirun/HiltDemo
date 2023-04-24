@@ -41,25 +41,27 @@ import rx.schedulers.Schedulers;
 
 @AndroidEntryPoint
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
-//
-//    @Inject
-//    IUserRepository repository;
 
     MainViewModel viewModel;
-
     UserAdapter adapter;
+
+    List<User> users;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         binding.setViewModel(viewModel);
+
         viewModel.fetchUsers();
 
-        adapter = new UserAdapter(viewModel);
+//        users = new ArrayList<>();
+        adapter = new UserAdapter(viewModel.userList,viewModel);
         viewModel.user.observe(this, users -> {
             viewModel.userList.addAll(users);
-            adapter.setUsers(users);
+            adapter.updateUsers(users);
             binding.rvUser.setAdapter(adapter);
+            binding.rvUser.getRecycledViewPool().setMaxRecycledViews(0, 0);
         });
 
         viewModel.internetConnection.observe(this, b->{
