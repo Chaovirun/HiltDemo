@@ -135,58 +135,33 @@ public class MainViewModel extends ViewModel {
 
     void fetchUsers() {
         _dataLoading.setValue(true);
-//        _internetConnection.setValue(connectivity.isConnected());
-//        if (connectivity.isConnected()) {
-//            repository.getUsers()
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(new Subscriber<Response<List<User>>>() {
-//                        @Override
-//                        public void onCompleted() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            Log.d(">>>", "getUsers >>> onError:  " + e.getMessage());
-//                        }
-//
-//                        @Override
-//                        public void onNext(Response<List<User>> users) {
-////                        _user.postValue(users);
-//                            _dataLoading.postValue(false);
-//                            if (users.isSuccessful()) {
-//                                _user.postValue(users.body());
-//                            }
-//                            Log.d(TAG, "fetchUsers: " + users);
-//                        }
-//                    });
-//        }
-        repository.getUsers()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<User>>>() {
-                    @Override
-                    public void onCompleted() {
+        _internetConnection.setValue(connectivity.isConnected());
+        if (connectivity.isConnected()) {
+            repository.getUsers()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Response<List<User>>>() {
+                        @Override
+                        public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(">>>", "getUsers >>> onError:  " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(Response<List<User>> users) {
-//                        _user.postValue(users);
-                        _dataLoading.postValue(false);
-                        if (users.isSuccessful()) {
-                            _user.postValue(users.body());
                         }
-                        Log.d(TAG, "fetchUsers: " + users);
-                    }
-                });
-    }
 
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(">>>", "getUsers >>> onError:  " + e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(Response<List<User>> users) {
+//                        _user.postValue(users);
+                            _dataLoading.postValue(false);
+                            if (users.isSuccessful()) {
+                                _user.postValue(users.body());
+                            }
+                            Log.d(TAG, "fetchUsers: " + users);
+                        }
+                    });
+        }
+    }
 
 }

@@ -49,7 +49,7 @@ public class NetworkModule {
 
     @Provides
     String providesBaseUrl() {
-        return "https://5e510330f2c0d300147c034c.mockapi.io/";
+        return "http://192.168.178.139:4141/";
     }
 
     @Provides
@@ -57,11 +57,6 @@ public class NetworkModule {
     NetworkConnectivity provideNetworkConnection(@ApplicationContext Context context){
         return new NetworkUtil(context);
     }
-
-//    @Provides
-//    String providesBaseUrl() {
-//        return "https://weeat.kosign.dev/";
-//    }
 
     @Provides
     @Singleton
@@ -110,7 +105,7 @@ public class NetworkModule {
         OkHttpClient.Builder okHttpClient = new OkHttpClient().newBuilder();
 
         okHttpClient.addInterceptor(loggingInterceptor);
-        okHttpClient.addInterceptor(interceptor);
+//        okHttpClient.addInterceptor(interceptor);
         okHttpClient.build();
         return okHttpClient.build();
     }

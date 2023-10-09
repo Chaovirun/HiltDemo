@@ -87,8 +87,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void onClick(View view) {
 //                Constant.token = "THIS IS FIREBASE TOKEN###";
 //                Constant.new_base_url = "weeat.kosign.dev";
-//                viewModel.login(new LoginRequest("", ""));
-                viewModel.fetchUsers();
+                viewModel.login(new LoginRequest("admin", "123"));
+//                viewModel.fetchUsers();
             }
         });
 

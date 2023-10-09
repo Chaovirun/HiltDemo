@@ -29,7 +29,7 @@ public interface ApiService {
     @GET("users")
     Observable<Response<List<User>>> getUsers();
 
-    @POST("api/v1/create")
+    @POST("/api/v1/auth/login")
     Observable<Response<LoginResponse>> requestLogin(@Body LoginRequest request);
 
 //    @GET("users")
